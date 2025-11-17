@@ -1,7 +1,5 @@
 
 
-
-
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Course, Schedule, Delegate, Student, Role } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -495,7 +493,35 @@ const StudentLog: React.FC<{
                 </div>
             </details>
 
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="space-y-4 md:hidden">
+                {sortedAndFilteredStudents.map((student) => (
+                    <div key={student.id} className="bg-[var(--color-background)] p-4 rounded-lg shadow border-r-4 border-[var(--color-primary)]">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="font-bold text-[var(--color-primary)] text-lg">{`${student.firstName} ${student.secondName} ${student.thirdName} ${student.lastName}`}</p>
+                                <p className="text-sm text-[var(--color-text-muted)]">{student.phone}</p>
+                            </div>
+                            <div className="text-sm font-semibold text-[var(--color-text-muted)]">#{student.id}</div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-[var(--color-border)] text-sm space-y-2">
+                            <p><strong>الدورة:</strong> {student.course}</p>
+                            <p><strong>المندوب:</strong> <span className="font-semibold">{getDelegateName(student.delegateId)}</span></p>
+                            <p><strong>تاريخ التسجيل:</strong> {student.registrationDate}</p>
+                        </div>
+                        {currentUser?.role === 'admin' && (
+                            <div className="mt-3 pt-2 border-t border-[var(--color-border)] flex justify-end gap-4">
+                                <button onClick={() => handleEditClick(student)} className="text-blue-600 font-semibold text-sm">تعديل</button>
+                                <button onClick={() => handleDeleteClick(student.id)} className="text-red-600 font-semibold text-sm">حذف</button>
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+
+            {/* Desktop Table View */}
+            <div className="overflow-x-auto hidden md:block">
                 <table className="w-full text-right">
                     <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
                         <tr>

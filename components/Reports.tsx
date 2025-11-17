@@ -1,4 +1,5 @@
 
+
 import React, { useMemo, useState } from 'react';
 import type { Commission, Delegate } from '../types';
 import { StudentStatus, CommissionStatus } from '../types';
@@ -18,6 +19,7 @@ interface PerformanceData {
     paidCommissions: number;
 }
 
+// FIX: Export the component to make it accessible to other modules.
 export const Reports: React.FC<ReportsProps> = ({ delegates, commissions }) => {
     const [selectedDelegateId, setSelectedDelegateId] = useState<string>('');
 
@@ -55,6 +57,15 @@ export const Reports: React.FC<ReportsProps> = ({ delegates, commissions }) => {
         const delegate = delegates.find(d => d.id === parseInt(selectedDelegateId, 10));
         return performanceData.filter(p => p.delegateName === delegate?.fullName);
     }, [performanceData, selectedDelegateId, delegates]);
+    
+    const totals = useMemo(() => ({
+        totalStudents: filteredData.reduce((sum, item) => sum + item.totalStudents, 0),
+        studyingStudents: filteredData.reduce((sum, item) => sum + item.studyingStudents, 0),
+        droppedStudents: filteredData.reduce((sum, item) => sum + item.droppedStudents, 0),
+        completedStudents: filteredData.reduce((sum, item) => sum + item.completedStudents, 0),
+        totalCommissions: filteredData.reduce((sum, item) => sum + item.totalCommissions, 0),
+        paidCommissions: filteredData.reduce((sum, item) => sum + item.paidCommissions, 0),
+    }), [filteredData]);
 
     const handlePrint = () => {
         window.print();
@@ -82,7 +93,41 @@ export const Reports: React.FC<ReportsProps> = ({ delegates, commissions }) => {
                     </select>
                 </div>
                 
-                <div className="overflow-x-auto">
+                {/* Mobile Card View */}
+                <div className="space-y-4 md:hidden">
+                    {filteredData.map((rep, index) => (
+                        <div key={index} className="bg-[var(--color-background)] p-4 rounded-lg shadow border-r-4 border-[var(--color-primary)]">
+                             <p className="font-bold text-[var(--color-primary)] text-lg mb-2">{rep.delegateName}</p>
+                             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t border-[var(--color-border)] pt-2">
+                                <p><strong>إجمالي الطلاب:</strong> {rep.totalStudents}</p>
+                                <p className="text-green-600"><strong>مستمرين:</strong> {rep.studyingStudents}</p>
+                                <p className="text-red-600"><strong>منقطعين:</strong> {rep.droppedStudents}</p>
+                                <p className="text-purple-600"><strong>مكتملين:</strong> {rep.completedStudents}</p>
+                             </div>
+                             <div className="mt-2 pt-2 border-t border-[var(--color-border)] text-sm space-y-1">
+                                <p><strong>إجمالي العمولات:</strong> <span className="font-bold text-[var(--color-secondary)]">{rep.totalCommissions.toLocaleString()} ريال</span></p>
+                                <p><strong>العمولات المدفوعة:</strong> <span className="font-bold text-[var(--color-success-text)]">{rep.paidCommissions.toLocaleString()} ريال</span></p>
+                             </div>
+                        </div>
+                    ))}
+                    {/* Totals Card for Mobile */}
+                    <div className="bg-[var(--color-primary)] text-[var(--color-primary-text)] p-4 rounded-lg shadow font-bold mt-4">
+                        <h4 className="text-lg mb-2 text-center">الإجماليات</h4>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                           <p>الطلاب: {totals.totalStudents}</p>
+                           <p>المستمرين: {totals.studyingStudents}</p>
+                           <p>المنقطعين: {totals.droppedStudents}</p>
+                           <p>المكتملين: {totals.completedStudents}</p>
+                        </div>
+                         <div className="mt-2 pt-2 border-t border-white/20 text-sm space-y-1">
+                           <p>إجمالي العمولات: {totals.totalCommissions.toLocaleString()} ريال</p>
+                           <p>العمولات المدفوعة: {totals.paidCommissions.toLocaleString()} ريال</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="overflow-x-auto hidden md:block">
                     <table className="w-full text-right">
                         <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
                             <tr>
@@ -111,17 +156,18 @@ export const Reports: React.FC<ReportsProps> = ({ delegates, commissions }) => {
                          <tfoot>
                             <tr className="bg-[var(--color-primary)] text-[var(--color-primary-text)] font-bold">
                                 <td className="p-3">الإجمالي</td>
-                                <td className="p-3 text-center">{filteredData.reduce((sum, item) => sum + item.totalStudents, 0)}</td>
-                                <td className="p-3 text-center">{filteredData.reduce((sum, item) => sum + item.studyingStudents, 0)}</td>
-                                <td className="p-3 text-center">{filteredData.reduce((sum, item) => sum + item.droppedStudents, 0)}</td>
-                                <td className="p-3 text-center">{filteredData.reduce((sum, item) => sum + item.completedStudents, 0)}</td>
-                                <td className="p-3">{filteredData.reduce((sum, item) => sum + item.totalCommissions, 0).toLocaleString()} ريال</td>
-                                <td className="p-3">{filteredData.reduce((sum, item) => sum + item.paidCommissions, 0).toLocaleString()} ريال</td>
+                                <td className="p-3 text-center">{totals.totalStudents}</td>
+                                <td className="p-3 text-center">{totals.studyingStudents}</td>
+                                <td className="p-3 text-center">{totals.droppedStudents}</td>
+                                <td className="p-3 text-center">{totals.completedStudents}</td>
+                                <td className="p-3">{totals.totalCommissions.toLocaleString()} ريال</td>
+                                <td className="p-3">{totals.paidCommissions.toLocaleString()} ريال</td>
                             </tr>
                         </tfoot>
                     </table>
-                     {filteredData.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)]">لا توجد بيانات لعرضها.</div>}
+                     {filteredData.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)] hidden md:block">لا توجد بيانات لعرضها.</div>}
                 </div>
+                {filteredData.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)] md:hidden">لا توجد بيانات لعرضها.</div>}
             </div>
         </div>
     );

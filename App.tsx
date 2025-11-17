@@ -52,6 +52,7 @@ const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>('dashboard');
   const [students, setStudents] = useState<Student[]>(initialStudentsData);
   const [commissions, setCommissions] = useState<Commission[]>(initialCommissions);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleAddStudent = (studentData: Omit<Student, 'id' | 'registrationDate'>) => {
     const newStudent: Student = {
@@ -179,14 +180,43 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text-base)]">
-      <div className="flex flex-col md:flex-row">
-        <MainMenu setActiveView={setActiveView} activeView={activeView} />
-        <main className="flex-1 p-4 md:p-8">
-          <AppHeader />
-          <div className="mt-8">
-            {renderView()}
-          </div>
-        </main>
+      <div className="relative min-h-screen md:flex">
+        {/* Overlay for mobile menu */}
+        {isMenuOpen && (
+          <div
+            onClick={() => setIsMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 z-30 md:hidden no-print"
+            aria-hidden="true"
+          />
+        )}
+
+        <MainMenu 
+          activeView={activeView}
+          setActiveView={(view) => {
+            setActiveView(view);
+            setIsMenuOpen(false); // Close menu on mobile after navigation
+          }}
+          isOpen={isMenuOpen}
+        />
+
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Mobile Header */}
+          <header className="md:hidden flex justify-between items-center p-4 bg-[var(--color-primary)] text-[var(--color-primary-text)] shadow-md sticky top-0 z-20 no-print">
+            <h1 className="text-lg font-bold">نظام المندوب الذكي - المركز الأوروبي</h1>
+            <button onClick={() => setIsMenuOpen(true)} className="p-2" aria-label="Open menu">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+          </header>
+          
+          <main className="flex-1 p-4 md:p-8">
+            <AppHeader />
+            <div className="mt-8">
+              {renderView()}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );

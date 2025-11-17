@@ -221,7 +221,37 @@ export const DelegateManagement: React.FC = () => {
                 <option value="inactive">غير نشط</option>
              </select>
         </div>
-        <div className="overflow-x-auto">
+        
+        {/* Mobile Card View */}
+        <div className="space-y-4 md:hidden">
+            {filteredUsers.map(user => (
+                <div key={user.id} className="bg-[var(--color-background)] p-4 rounded-lg shadow border-r-4 border-[var(--color-primary)]">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="font-bold text-[var(--color-primary)] text-lg">{user.fullName}</p>
+                            <p className="text-sm text-[var(--color-text-muted)] font-mono">@{user.username}</p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${user.isActive ? 'bg-[var(--color-success-light)] text-[var(--color-success-text)]' : 'bg-gray-200 text-gray-800'}`}>
+                            {user.isActive ? 'نشط' : 'غير نشط'}
+                        </span>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-[var(--color-border)] text-sm space-y-2">
+                        <p><strong>الهاتف:</strong> {user.delegate?.phone || '-'}</p>
+                        <p><strong>الصلاحية:</strong> {roleLabels[user.role]}</p>
+                        <p><strong>مسجل بواسطة:</strong> {user.referredById ? userMap.get(user.referredById) : '-'}</p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-[var(--color-border)] flex justify-end gap-4">
+                        <button onClick={() => openEditModal(user)} className="text-blue-600 font-semibold text-sm">تعديل</button>
+                        <button onClick={() => toggleUserStatus(user.id)} className="text-red-600 font-semibold text-sm">
+                            {user.isActive ? 'تعطيل' : 'تفعيل'}
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="overflow-x-auto hidden md:block">
           <table className="w-full text-right">
             <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
               <tr>

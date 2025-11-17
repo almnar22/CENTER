@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { AppHeader } from './AppHeader';
@@ -41,7 +42,7 @@ const TabButton: React.FC<{
 }> = ({ label, icon, isActive, onClick }) => (
     <button
         onClick={onClick}
-        className={`flex-1 md:flex-initial md:w-auto flex items-center justify-center gap-2 p-3 font-bold rounded-t-lg transition-colors ${
+        className={`flex-1 whitespace-nowrap md:flex-initial md:w-auto flex items-center justify-center gap-2 p-3 font-bold rounded-t-lg transition-colors ${
             isActive
                 ? 'bg-[var(--color-card)] text-[var(--color-primary)]'
                 : 'bg-[var(--color-primary-light)] text-[var(--color-primary)] hover:bg-[var(--color-border)]'
@@ -157,9 +158,25 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
                 );
             case 'students':
                 return (
-                    <div className="bg-[var(--color-card)] p-6 rounded-lg shadow-md">
+                    <div className="bg-[var(--color-card)] p-4 md:p-6 rounded-lg shadow-md">
                         <h3 className="text-xl font-bold text-[var(--color-primary)] mb-4">قائمة الطلاب المسجلين عن طريقك:</h3>
-                        <div className="overflow-x-auto">
+                        
+                        {/* Mobile Card View */}
+                        <div className="space-y-4 md:hidden">
+                            {myStudents.map((student) => (
+                                <div key={student.id} className="bg-[var(--color-background)] p-4 rounded-lg shadow border-r-4 border-[var(--color-primary)]">
+                                    <p className="font-bold text-[var(--color-primary)] text-lg">{`${student.firstName} ${student.secondName} ${student.thirdName} ${student.lastName}`}</p>
+                                    <p className="text-sm text-[var(--color-text-muted)]">{student.phone}</p>
+                                    <div className="mt-2 pt-2 border-t border-[var(--color-border)] text-sm space-y-1">
+                                        <p><strong>الدورة:</strong> {student.course}</p>
+                                        <p><strong>التسجيل:</strong> {student.registrationDate}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        {/* Desktop Table View */}
+                        <div className="overflow-x-auto hidden md:block">
                             <table className="w-full text-right">
                                 <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
                                     <tr>
@@ -180,8 +197,8 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
                                     ))}
                                 </tbody>
                             </table>
-                            {myStudents.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)]">لم تقم بتسجيل أي طالب بعد.</div>}
                         </div>
+                        {myStudents.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)]">لم تقم بتسجيل أي طالب بعد.</div>}
                     </div>
                 );
             case 'addStudent':
@@ -200,9 +217,34 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
                 );
             case 'commissions':
                 return (
-                     <div className="bg-[var(--color-card)] p-6 rounded-lg shadow-md">
+                     <div className="bg-[var(--color-card)] p-4 md:p-6 rounded-lg shadow-md">
                         <h3 className="text-xl font-bold text-[var(--color-primary)] mb-4">سجل العمولات الخاص بك:</h3>
-                        <div className="overflow-x-auto">
+                        
+                        {/* Mobile Card View */}
+                        <div className="space-y-4 md:hidden">
+                            {myCommissions.map((commission) => (
+                                <div key={commission.id} className="bg-[var(--color-background)] p-4 rounded-lg shadow border-r-4 border-[var(--color-secondary)]">
+                                     <div className="flex justify-between items-start">
+                                        <p className="font-bold text-[var(--color-primary)] text-lg">{commission.studentName}</p>
+                                        <p className="text-lg font-bold text-[var(--color-secondary)]">{commission.amount} ريال</p>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-[var(--color-border)] grid grid-cols-2 gap-2 text-sm">
+                                        <div>
+                                            <label className="font-semibold block">حالة العمولة:</label>
+                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${commissionStatusStyles[commission.status].classes}`}>{commissionStatusStyles[commission.status].icon} {commissionStatusStyles[commission.status].label}</span>
+                                        </div>
+                                         <div>
+                                            <label className="font-semibold block">حالة الطالب:</label>
+                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${studentStatusStyles[commission.studentStatus].classes}`}>{studentStatusStyles[commission.studentStatus].icon} {studentStatusStyles[commission.studentStatus].label}</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-[var(--color-text-muted)] mt-2">تاريخ الإنشاء: {commission.createdDate}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Desktop Table View */}
+                        <div className="overflow-x-auto hidden md:block">
                            <table className="w-full text-right">
                                <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
                                    <tr>
@@ -225,15 +267,38 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
                                    ))}
                                </tbody>
                            </table>
-                           {myCommissions.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)]">لا توجد عمولات مسجلة لك بعد.</div>}
-                       </div>
+                        </div>
+                        {myCommissions.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)]">لا توجد عمولات مسجلة لك بعد.</div>}
                    </div>
                 );
             case 'myNetwork':
                 return (
-                     <div className="bg-[var(--color-card)] p-6 rounded-lg shadow-md">
+                     <div className="bg-[var(--color-card)] p-4 md:p-6 rounded-lg shadow-md">
                         <h3 className="text-xl font-bold text-[var(--color-primary)] mb-4">🌐 شبكة المندوبين المسجلين بواسطتي</h3>
-                        <div className="overflow-x-auto">
+                        
+                        {/* Mobile Card View */}
+                         <div className="space-y-4 md:hidden">
+                            {myNetwork.map((rep) => (
+                                <div key={rep.id} className="bg-[var(--color-background)] p-4 rounded-lg shadow border-r-4 border-[var(--color-primary)]">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <p className="font-bold text-[var(--color-primary)] text-lg">{rep.fullName}</p>
+                                            <p className="text-sm text-[var(--color-text-muted)]">{rep.phone}</p>
+                                        </div>
+                                        <span className={`font-semibold text-xs px-2 py-1 rounded-full ${rep.isActive ? 'text-green-800 bg-green-100' : 'text-red-800 bg-red-100'}`}>
+                                            {rep.isActive ? 'نشط' : 'غير نشط'}
+                                        </span>
+                                    </div>
+                                    <div className="mt-2 pt-2 border-t border-[var(--color-border)] text-sm grid grid-cols-2 gap-2">
+                                        <p><strong>تاريخ التسجيل:</strong> {rep.createdDate}</p>
+                                        <p><strong>عدد الطلاب:</strong> <span className="font-bold">{rep.students}</span></p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Desktop Table View */}
+                        <div className="overflow-x-auto hidden md:block">
                            <table className="w-full text-right">
                                <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
                                    <tr>
@@ -260,8 +325,8 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
                                    ))}
                                </tbody>
                            </table>
-                           {myNetwork.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)]">لم تقم بتسجيل أي مندوبين بعد.</div>}
-                       </div>
+                        </div>
+                        {myNetwork.length === 0 && <div className="text-center p-8 text-[var(--color-text-muted)]">لم تقم بتسجيل أي مندوبين بعد.</div>}
                    </div>
                 );
             case 'bankAccount':
@@ -317,9 +382,9 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
             <header className="bg-[var(--color-card)] shadow-md p-4 flex justify-between items-center">
                 <h1 className="text-xl font-bold text-[var(--color-primary)]">🤝 لوحة تحكم المندوب</h1>
                 <div className="flex items-center gap-4">
-                    <span className="font-semibold">{currentUser.fullName}</span>
+                    <span className="font-semibold hidden sm:inline">{currentUser.fullName}</span>
                     <button onClick={logout} className="bg-[var(--color-secondary)] text-[var(--color-primary-text)] font-bold py-2 px-4 rounded-lg hover:bg-[var(--color-secondary-hover)] transition-colors duration-300 flex items-center gap-2">
-                        <span>تسجيل الخروج</span>
+                        <span className="hidden sm:inline">تسجيل الخروج</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
                     </button>
                 </div>
@@ -327,15 +392,17 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
             <main className="p-4 md:p-8">
                 <AppHeader />
                 <div className="mt-8">
-                    <div className="flex flex-wrap border-b-2 border-[var(--color-primary)] mb-6">
-                        <TabButton label="لوحة التحكم" icon="📊" isActive={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
-                        <TabButton label="طلابي" icon="👥" isActive={activeTab === 'students'} onClick={() => setActiveTab('students')} />
-                        <TabButton label="سجل عمولاتي" icon="💰" isActive={activeTab === 'commissions'} onClick={() => setActiveTab('commissions')} />
-                        <TabButton label="شبكتي" icon="🌐" isActive={activeTab === 'myNetwork'} onClick={() => setActiveTab('myNetwork')} />
-                        <TabButton label="تسجيل طالب" icon="📝" isActive={activeTab === 'addStudent'} onClick={() => setActiveTab('addStudent')} />
-                        <TabButton label="إضافة مندوب" icon="🤝" isActive={activeTab === 'addDelegate'} onClick={() => setActiveTab('addDelegate')} />
-                        <TabButton label="حسابي البنكي" icon="🏦" isActive={activeTab === 'bankAccount'} onClick={() => setActiveTab('bankAccount')} />
-                        <TabButton label="بياناتي الشخصية" icon="👤" isActive={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
+                    <div className="overflow-x-auto">
+                        <div className="flex border-b-2 border-[var(--color-primary)] mb-6">
+                            <TabButton label="لوحة التحكم" icon="📊" isActive={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
+                            <TabButton label="طلابي" icon="👥" isActive={activeTab === 'students'} onClick={() => setActiveTab('students')} />
+                            <TabButton label="سجل عمولاتي" icon="💰" isActive={activeTab === 'commissions'} onClick={() => setActiveTab('commissions')} />
+                            <TabButton label="شبكتي" icon="🌐" isActive={activeTab === 'myNetwork'} onClick={() => setActiveTab('myNetwork')} />
+                            <TabButton label="تسجيل طالب" icon="📝" isActive={activeTab === 'addStudent'} onClick={() => setActiveTab('addStudent')} />
+                            <TabButton label="إضافة مندوب" icon="🤝" isActive={activeTab === 'addDelegate'} onClick={() => setActiveTab('addDelegate')} />
+                            <TabButton label="حسابي البنكي" icon="🏦" isActive={activeTab === 'bankAccount'} onClick={() => setActiveTab('bankAccount')} />
+                            <TabButton label="بياناتي الشخصية" icon="👤" isActive={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
+                        </div>
                     </div>
                      {notification && <Notification message={notification.message} type={notification.type} />}
                     {renderContent()}

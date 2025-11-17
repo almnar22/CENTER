@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const DiamondIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -13,14 +14,13 @@ export const AppHeader: React.FC = () => {
         <DiamondIcon className="text-[var(--color-primary)]" />
         <DiamondIcon className="text-[var(--color-secondary)]" />
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
-          نظام المركز الأوروبي
+          نظام المندوب الذكي - المركز الأوروبي
         </h1>
         <DiamondIcon className="text-[var(--color-secondary)]" />
         <DiamondIcon className="text-[var(--color-primary)]" />
       </div>
       <div className="mt-2 text-[var(--color-text-muted)]">
-        <p>📍 المركز الأوروبي - حجة شارع مجمع الثورة</p>
-        <p>📞 07223242 - 771991074</p>
+        <p>📍 المركز الأوروبي - حجة شارع مجمع الثورة | 📞 07223242 - 771991074</p>
       </div>
     </div>
   );

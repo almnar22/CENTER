@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { View, Role } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -5,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 interface MainMenuProps {
   activeView: View;
   setActiveView: (view: View) => void;
+  isOpen: boolean;
 }
 
 const MenuIcon: React.FC<{ path: string }> = ({ path }) => (
@@ -19,11 +21,11 @@ const menuItems: { view: View; label: string; iconPath: string; roles: Role[] }[
   { view: 'delegates', label: 'إدارة المستخدمين والموظفين', iconPath: 'M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.228a4.5 4.5 0 00-1.025.07M21 12a9 9 0 11-18 0 9 9 0 0118 0z', roles: ['admin'] },
   { view: 'commissions', label: 'سجل العمولات والمدفوعات', iconPath: 'M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414-.336.75-.75.75h-.75m0-1.5h.375c.621 0 1.125.504 1.125 1.125v.375m-18 0h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v9h18c.621 0 1.125-.504 1.125-1.125v-9.125c0-.621-.504-1.125-1.125-1.125H3.75z', roles: ['admin', 'manager'] },
   { view: 'reports', label: 'التقارير والإحصائيات', iconPath: 'M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 19.875v-6.75zM3.75 14.25v4.5a.75.75 0 00.75.75h15a.75.75 0 00.75-.75v-4.5a.75.75 0 00-.75-.75h-15a.75.75 0 00-.75.75z', roles: ['admin', 'manager'] },
-  { view: 'settings', label: 'إعدادات النظام', iconPath: 'M9.594 3.94c.09-.542.56-1.007 1.11-1.226.554-.22 1.197-.22 1.752 0 .549.219 1.018.684 1.11 1.226l.082.498a1.5 1.5 0 001.458 1.075h.502a1.5 1.5 0 011.5 1.5v.502c0 .608-.287 1.17-.757 1.458l-.498.082c-.542.09-.92.56-1.226 1.11-.22.554-.22 1.197 0 1.752.219.549.684 1.018 1.226 1.11l.498.082a1.5 1.5 0 01.757 1.458v.502a1.5 1.5 0 01-1.5 1.5h-.502a1.5 1.5 0 00-1.458 1.075l-.082.498c-.09.542-.56 1.007-1.11 1.226-.554.22-1.197-.22-1.752 0-.549-.219-1.018-.684-1.11-1.226l-.082-.498a1.5 1.5 0 00-1.458-1.075h-.502a1.5 1.5 0 01-1.5-1.5v-.502c0-.608.287-1.17.757-1.458l.498-.082c.542-.09.92-.56 1.226-1.11.22-.554-.22-1.197 0-1.752-.219-.549-.684-1.018-1.226-1.11l-.498-.082a1.5 1.5 0 01-.757-1.458v-.502a1.5 1.5 0 011.5-1.5h.502A1.5 1.5 0 009.594 3.94zM14.25 12a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z', roles: ['admin'] },
+  { view: 'settings', label: 'إعدادات النظام', iconPath: 'M9.594 3.94c.09-.542.56-1.007 1.11-1.226.554-.22 1.197-.22 1.752 0 .549.219 1.018.684 1.11 1.226l.082.498a1.5 1.5 0 001.458 1.075h.502a1.5 1.5 0 011.5 1.5v.502c0 .608-.287 1.17-.757 1.458l-.498.082c-.542.09-.92.56-1.226 1.11-.22.554-.22 1.197 0 1.752.219.549.684 1.018 1.226 1.11l.498.082a1.5 1.5 0 01.757 1.458v.502a1.5 1.5 0 01-1.5 1.5h-.502a1.5 1.5 0 00-1.458 1.075l-.082.498c-.09.542-.56 1.007-1.11 1.226-.554.22-1.197-.22-1.752 0-.549-.219-1.018-.684-1.11-1.226l-.082-.498a1.5 1.5 0 00-1.458-1.075h-.502a1.5 1.5 0 01-1.5-1.5v-.502c0-.608.287-1.17.757-1.458l.498-.082c.542-.09.92.56 1.226-1.11.22-.554-.22-1.197 0-1.752-.219-.549-.684-1.018-1.226-1.11l-.498-.082a1.5 1.5 0 01-.757-1.458v-.502a1.5 1.5 0 011.5-1.5h.502A1.5 1.5 0 009.594 3.94zM14.25 12a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z', roles: ['admin'] },
   { view: 'logout', label: 'تسجيل الخروج', iconPath: 'M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75', roles: ['admin', 'manager', 'delegate'] },
 ];
 
-export const MainMenu: React.FC<MainMenuProps> = ({ activeView, setActiveView }) => {
+export const MainMenu: React.FC<MainMenuProps> = ({ activeView, setActiveView, isOpen }) => {
   const { currentUser, logout } = useAuth();
   
   if (!currentUser) return null;
@@ -31,7 +33,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({ activeView, setActiveView })
   const visibleMenuItems = menuItems.filter(item => item.roles.includes(currentUser.role));
 
   return (
-    <aside className="bg-[var(--color-primary)] text-[var(--color-primary-text)] w-full md:w-64 p-4 md:min-h-screen">
+    <aside className={`bg-[var(--color-primary)] text-[var(--color-primary-text)] w-64 p-4 min-h-screen fixed inset-y-0 right-0 z-40 transform transition-transform duration-300 ease-in-out md:static md:transform-none md:min-h-screen no-print
+      ${isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}`}
+    >
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold">🔷 القائمة الرئيسية 🔷</h2>
         <p className="text-sm opacity-80">{currentUser.fullName}</p>

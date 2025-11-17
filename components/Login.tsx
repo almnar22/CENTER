@@ -33,7 +33,7 @@ export const Login: React.FC = () => {
                 <div className="bg-[var(--color-card)] p-4 rounded-lg shadow-md border-t-4 border-[var(--color-primary)] text-center mb-6">
                     <div className="flex items-center justify-center gap-2">
                         <DiamondIcon className="text-[var(--color-primary)]" />
-                        <h1 className="text-2xl font-bold text-[var(--color-primary)]">نظام المركز الأوروبي</h1>
+                        <h1 className="text-2xl font-bold text-[var(--color-primary)]">نظام المندوب الذكي - المركز الأوروبي</h1>
                         <DiamondIcon className="text-[var(--color-secondary)]" />
                     </div>
                 </div>
