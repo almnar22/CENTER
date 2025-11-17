@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { View, Role } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -37,7 +36,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ activeView, setActiveView, i
       ${isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}`}
     >
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold">🔷 القائمة الرئيسية 🔷</h2>
+        <h2 className="text-2xl font-bold pt-8">القائمة الرئيسية</h2>
         <p className="text-sm opacity-80">{currentUser.fullName}</p>
       </div>
       <nav>
