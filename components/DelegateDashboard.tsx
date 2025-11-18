@@ -14,7 +14,7 @@ interface DelegateDashboardProps {
     onAddStudent: (student: Omit<Student, 'id' | 'registrationDate'>) => void;
 }
 
-type DelegateView = 'dashboard' | 'students' | 'addStudent' | 'addDelegate' | 'commissions' | 'bankAccount' | 'profile' | 'myNetwork';
+type DelegateView = 'dashboard' | 'students' | 'addStudent' | 'addDelegate' | 'commissions' | 'bankAccount' | 'profile' | 'myNetwork' | 'changePassword';
 
 const StatCard: React.FC<{ title: string; value: string | number; icon: string; color: 'primary' | 'secondary' }> = ({ title, value, icon, color }) => {
     const colorClasses = {
@@ -79,13 +79,14 @@ const studentStatusStyles: Record<StudentStatus, { classes: string, label: strin
 
 
 export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates, students, commissions, onAddStudent }) => {
-    const { currentUser, users, logout, addUser, updateUser, bankAccounts, addOrUpdateBankAccount } = useAuth();
+    const { currentUser, users, logout, addUser, updateUser, bankAccounts, addOrUpdateBankAccount, changePassword } = useAuth();
     const [activeTab, setActiveTab] = useState<DelegateView>('dashboard');
     const [isAddDelegateModalOpen, setIsAddDelegateModalOpen] = useState(false);
     const [notification, setNotification] = useState<{message: string; type: 'success' | 'error'} | null>(null);
 
     const [bankDetails, setBankDetails] = useState({ bankName: '', accountHolder: '', bankAccount: '' });
     const [profileDetails, setProfileDetails] = useState({ fullName: '', email: '' });
+    const [passwordDetails, setPasswordDetails] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
     
     const delegateProfile = currentUser ? delegates.find(d => d.userId === currentUser.id) : undefined;
     
@@ -145,6 +146,27 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
         updateUser(currentUser.id, { ...currentUser, ...profileDetails });
         setNotification({ message: '✅ تم تحديث بياناتك الشخصية بنجاح!', type: 'success' });
         setTimeout(() => setNotification(null), 3000);
+    };
+
+    const handlePasswordChangeSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (passwordDetails.newPassword !== passwordDetails.confirmPassword) {
+            setNotification({ message: '❌ كلمات المرور الجديدة غير متطابقة.', type: 'error' });
+            return;
+        }
+        if (passwordDetails.newPassword.length < 6) {
+             setNotification({ message: '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل.', type: 'error' });
+             return;
+        }
+
+        try {
+            await changePassword(currentUser.id, passwordDetails.currentPassword, passwordDetails.newPassword);
+            setNotification({ message: '✅ تم تغيير كلمة المرور بنجاح!', type: 'success' });
+            setPasswordDetails({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        } catch (err: any) {
+             setNotification({ message: `❌ ${err.message}`, type: 'error' });
+        }
+         setTimeout(() => setNotification(null), 3000);
     };
 
     const renderContent = () => {
@@ -372,6 +394,29 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
                        </form>
                    </div>
                 );
+            case 'changePassword':
+                 return (
+                     <div className="bg-[var(--color-card)] p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+                        <h3 className="text-xl font-bold text-[var(--color-primary)] mb-4">🔐 تغيير كلمة المرور</h3>
+                        <form onSubmit={handlePasswordChangeSubmit} className="space-y-4">
+                             <div>
+                                <label htmlFor="currentPassword" className="block font-semibold mb-2">كلمة المرور الحالية:</label>
+                                <input type="password" id="currentPassword" value={passwordDetails.currentPassword} onChange={e => setPasswordDetails({...passwordDetails, currentPassword: e.target.value})} required className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] transition bg-[var(--color-card)]" />
+                            </div>
+                            <div>
+                                <label htmlFor="newPassword" className="block font-semibold mb-2">كلمة المرور الجديدة:</label>
+                                <input type="password" id="newPassword" value={passwordDetails.newPassword} onChange={e => setPasswordDetails({...passwordDetails, newPassword: e.target.value})} required className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] transition bg-[var(--color-card)]" />
+                            </div>
+                            <div>
+                                <label htmlFor="confirmPassword" className="block font-semibold mb-2">تأكيد كلمة المرور الجديدة:</label>
+                                <input type="password" id="confirmPassword" value={passwordDetails.confirmPassword} onChange={e => setPasswordDetails({...passwordDetails, confirmPassword: e.target.value})} required className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] transition bg-[var(--color-card)]" />
+                            </div>
+                            <div className="text-center pt-4">
+                                <button type="submit" className="bg-[var(--color-secondary)] text-[var(--color-primary-text)] font-bold py-2 px-8 rounded-lg hover:bg-[var(--color-secondary-hover)] transition-colors">تغيير كلمة المرور</button>
+                            </div>
+                        </form>
+                    </div>
+                 );
             default: return null;
         }
     }
@@ -401,7 +446,8 @@ export const DelegateDashboard: React.FC<DelegateDashboardProps> = ({ delegates,
                             <TabButton label="تسجيل طالب" icon="📝" isActive={activeTab === 'addStudent'} onClick={() => setActiveTab('addStudent')} />
                             <TabButton label="إضافة مندوب" icon="🤝" isActive={activeTab === 'addDelegate'} onClick={() => setActiveTab('addDelegate')} />
                             <TabButton label="حسابي البنكي" icon="🏦" isActive={activeTab === 'bankAccount'} onClick={() => setActiveTab('bankAccount')} />
-                            <TabButton label="بياناتي الشخصية" icon="👤" isActive={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
+                            <TabButton label="بياناتي" icon="👤" isActive={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
+                            <TabButton label="كلمة المرور" icon="🔐" isActive={activeTab === 'changePassword'} onClick={() => setActiveTab('changePassword')} />
                         </div>
                     </div>
                      {notification && <Notification message={notification.message} type={notification.type} />}

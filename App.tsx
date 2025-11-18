@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from 'react';
 import { AppHeader } from './components/AppHeader';
 import { MainMenu } from './components/MainMenu';
@@ -9,7 +8,9 @@ import { DelegateManagement } from './components/DelegateManagement';
 import { CommissionManagement } from './components/CommissionManagement';
 import { Reports } from './components/Reports';
 import { Settings } from './components/Settings';
-import type { View, Student, Commission, Delegate } from './types';
+import { ActivityLogs } from './components/ActivityLogs';
+import { CourseManagement } from './components/CourseManagement';
+import type { View, Student, Commission, Delegate, BackupData, CourseObject } from './types';
 import { Course, Schedule, CommissionStatus, StudentStatus } from './types';
 import { useAuth } from './contexts/AuthContext';
 import { Login } from './components/Login';
@@ -46,12 +47,22 @@ const initialCommissions: Commission[] = [
     { id: 10, studentId: 10, delegateId: 7, studentName: 'بدر ناصر خالد السعدي', course: Course.Maintenance, amount: 500, status: CommissionStatus.Confirmed, studentStatus: StudentStatus.Studying, createdDate: '2024-07-28', confirmedDate: '2024-07-30' },
 ];
 
+const initialCourses: CourseObject[] = [
+    { id: 1, name: 'دورة الحاسوب المتقدم', description: 'دورة شاملة في أساسيات الحاسوب والأوفيس', category: 'حاسوب', duration: 4, price: 1000, current_students: 18, max_students: 25, time_slot: 'صباحي', start_date: '2024-01-10', end_date: '2024-02-20', enrollment_open: true, status: 'active' },
+    { id: 2, name: 'دورة اللغة الإنجليزية', description: 'مستويات متعددة في اللغة الإنجليزية', category: 'لغات', duration: 6, price: 1200, current_students: 22, max_students: 22, time_slot: 'مسائي', start_date: '2024-01-05', end_date: '2024-02-15', enrollment_open: false, status: 'active' },
+    { id: 3, name: 'دورة المحاسبة', description: 'أساسيات المحاسبة المالية والإدارية', category: 'إدارة', duration: 5, price: 1500, current_students: 12, max_students: 20, time_slot: 'صباحي', start_date: '2024-01-25', end_date: '2024-03-10', enrollment_open: true, status: 'active' },
+    { id: 4, name: 'دورة الجرافيكس والتصميم', description: 'تعلم الفوتوشوب والإليستريتور', category: 'فني', duration: 6, price: 1800, current_students: 8, max_students: 15, time_slot: 'صباحي', start_date: '2024-02-01', end_date: '2024-03-15', enrollment_open: true, status: 'upcoming' },
+    { id: 5, name: 'دورة صيانة الأجهزة', description: 'صيانة الهواتف الذكية والحواسيب', category: 'فني', duration: 6, price: 1500, current_students: 12, max_students: 18, time_slot: 'مسائي', start_date: '2024-02-05', end_date: '2024-03-20', enrollment_open: true, status: 'upcoming' },
+    { id: 6, name: 'دورة البرمجة', description: 'أساسيات البرمجة بلغة بايثون', category: 'حاسوب', duration: 8, price: 2000, current_students: 0, max_students: 20, time_slot: 'صباحي ومسائي', start_date: '2024-02-10', end_date: '2024-04-01', enrollment_open: false, status: 'upcoming' }
+];
+
 
 const App: React.FC = () => {
-  const { currentUser, delegates, incrementStudentCount, decrementStudentCount } = useAuth();
+  const { currentUser, delegates, incrementStudentCount, decrementStudentCount, logActivity, users, bankAccounts, restoreData } = useAuth();
   const [activeView, setActiveView] = useState<View>('dashboard');
   const [students, setStudents] = useState<Student[]>(initialStudentsData);
   const [commissions, setCommissions] = useState<Commission[]>(initialCommissions);
+  const [courses, setCourses] = useState<CourseObject[]>(initialCourses);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleAddStudent = (studentData: Omit<Student, 'id' | 'registrationDate'>) => {
@@ -76,10 +87,14 @@ const App: React.FC = () => {
         createdDate: newStudent.registrationDate,
     };
     setCommissions(prev => [newCommission, ...prev]);
+    
+    logActivity('add', 'students', `${newStudent.firstName} ${newStudent.lastName}`);
   };
 
   const handleEditStudent = (studentId: number, updatedData: Partial<Omit<Student, 'id'>>) => {
+      const oldData = students.find(s => s.id === studentId);
       setStudents(prev => prev.map(s => s.id === studentId ? {...s, ...updatedData} : s));
+      if(oldData) logActivity('edit', 'students', `${oldData.firstName} ${oldData.lastName} (ID: ${studentId})`);
   };
   
   const handleDeleteStudent = (studentId: number) => {
@@ -88,6 +103,7 @@ const App: React.FC = () => {
           setStudents(prev => prev.filter(s => s.id !== studentId));
           setCommissions(prev => prev.filter(c => c.studentId !== studentId));
           decrementStudentCount(studentToDelete.delegateId);
+          logActivity('delete', 'students', `${studentToDelete.firstName} ${studentToDelete.lastName} (ID: ${studentId})`);
       }
   };
   
@@ -104,6 +120,7 @@ const App: React.FC = () => {
           }
           return c;
       }));
+      logActivity('edit', 'commissions', `تحديث حالة العمولة (ID: ${commissionId}) إلى ${status}`);
   };
 
   const updateStudentStatus = (commissionId: number, studentStatus: StudentStatus) => {
@@ -130,6 +147,70 @@ const App: React.FC = () => {
           }
           return c;
       }));
+      logActivity('edit', 'commissions', `تحديث حالة الطالب للعمولة (ID: ${commissionId}) إلى ${studentStatus}`);
+  };
+
+  // --- Course Management Handlers ---
+  const handleAddCourse = (courseData: Omit<CourseObject, 'id' | 'current_students'>) => {
+      const newCourse: CourseObject = {
+          id: courses.length > 0 ? Math.max(...courses.map(c => c.id)) + 1 : 1,
+          ...courseData,
+          current_students: 0
+      };
+      setCourses(prev => [...prev, newCourse]);
+      logActivity('add', 'courses', `إضافة دورة جديدة: ${newCourse.name}`);
+  };
+
+  const handleUpdateCourse = (id: number, courseData: Partial<CourseObject>) => {
+      setCourses(prev => prev.map(c => c.id === id ? { ...c, ...courseData } : c));
+      logActivity('edit', 'courses', `تحديث دورة: ${id}`);
+  };
+
+  const handleDeleteCourse = (id: number) => {
+      const courseToDelete = courses.find(c => c.id === id);
+      if (courseToDelete) {
+          setCourses(prev => prev.filter(c => c.id !== id));
+          logActivity('delete', 'courses', `حذف دورة: ${courseToDelete.name}`);
+      }
+  };
+
+  const handleCreateBackup = (): BackupData => {
+      const data = {
+          students,
+          commissions,
+          users,
+          delegates,
+          bankAccounts,
+          courses
+      };
+      const jsonString = JSON.stringify(data);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const size = (blob.size / 1024).toFixed(2) + ' KB';
+      
+      const backup: BackupData = {
+          name: `backup_${new Date().toISOString().replace(/[:.]/g, '-')}`,
+          date: new Date().toISOString(),
+          size: size,
+          data: data
+      };
+      logActivity('backup', 'system', 'تم إنشاء نسخة احتياطية');
+      return backup;
+  };
+
+  const handleRestoreBackup = (data: any) => {
+      if (data.students) setStudents(data.students);
+      if (data.commissions) setCommissions(data.commissions);
+      if (data.courses) setCourses(data.courses);
+      
+      // Restore Auth Context data
+      if (data.users || data.delegates || data.bankAccounts) {
+          restoreData({
+              users: data.users,
+              delegates: data.delegates,
+              bankAccounts: data.bankAccounts
+          });
+      }
+      logActivity('restore', 'system', 'تم استعادة نسخة احتياطية');
   };
 
   const dashboardStats = useMemo(() => {
@@ -162,19 +243,23 @@ const App: React.FC = () => {
   const renderView = () => {
     switch (activeView) {
       case 'dashboard':
-        return <Dashboard stats={dashboardStats} />;
+        return <Dashboard stats={dashboardStats} courses={courses} onNavigate={setActiveView} />;
       case 'students':
         return <StudentManagement delegates={delegates} students={students} onAddStudent={handleAddStudent} onEditStudent={handleEditStudent} onDeleteStudent={handleDeleteStudent} />;
       case 'delegates':
         return <DelegateManagement />;
       case 'commissions':
         return <CommissionManagement commissions={commissions} delegates={delegates} onUpdateCommissionStatus={updateCommissionStatus} onUpdateStudentStatus={updateStudentStatus} />;
+      case 'courses':
+        return <CourseManagement courses={courses} onAddCourse={handleAddCourse} onUpdateCourse={handleUpdateCourse} onDeleteCourse={handleDeleteCourse} />;
       case 'reports':
         return <Reports delegates={delegates} commissions={commissions} />;
+      case 'activity-logs':
+        return <ActivityLogs />;
       case 'settings':
-        return <Settings />;
+        return <Settings onCreateBackup={handleCreateBackup} onRestoreBackup={handleRestoreBackup} />;
       default:
-        return <Dashboard stats={dashboardStats}/>;
+        return <Dashboard stats={dashboardStats} courses={courses} onNavigate={setActiveView} />;
     }
   };
 

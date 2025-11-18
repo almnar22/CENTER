@@ -61,7 +61,7 @@ export const CommissionManagement: React.FC<CommissionManagementProps> = ({ comm
                         <p className="text-lg font-bold text-[var(--color-secondary)]">{commission.amount} ريال</p>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-[var(--color-border)] grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div className="mt-3 pt-3 border-t border-[var(--color-border)] grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-[var(--color-text-base)]">
                         <div>
                             <label className="font-semibold block mb-1">حالة العمولة:</label>
                              <span className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${commissionStatusStyles[commission.status].classes}`}>
@@ -104,27 +104,27 @@ export const CommissionManagement: React.FC<CommissionManagementProps> = ({ comm
         </div>
 
         {/* Desktop Table View */}
-        <div className="overflow-x-auto hidden md:block">
-          <table className="w-full text-right">
-            <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
+        <div className="overflow-x-auto hidden md:block rounded-t-lg border border-[var(--color-border)]">
+          <table className="w-full text-right border-collapse">
+            <thead className="bg-[var(--color-primary)] text-[var(--color-primary-text)]">
               <tr>
-                <th className="p-3 font-semibold">المندوب</th>
-                <th className="p-3 font-semibold">الطالب</th>
-                <th className="p-3 font-semibold">الدورة</th>
-                <th className="p-3 font-semibold">المبلغ</th>
-                <th className="p-3 font-semibold">حالة العمولة</th>
-                <th className="p-3 font-semibold">حالة الطالب</th>
-                <th className="p-3 font-semibold">تاريخ الإنشاء</th>
-                <th className="p-3 font-semibold">إجراء الدفع</th>
+                <th className="p-3 font-semibold whitespace-nowrap">المندوب</th>
+                <th className="p-3 font-semibold whitespace-nowrap">الطالب</th>
+                <th className="p-3 font-semibold whitespace-nowrap">الدورة</th>
+                <th className="p-3 font-semibold whitespace-nowrap">المبلغ</th>
+                <th className="p-3 font-semibold whitespace-nowrap">حالة العمولة</th>
+                <th className="p-3 font-semibold whitespace-nowrap">حالة الطالب</th>
+                <th className="p-3 font-semibold whitespace-nowrap">تاريخ الإنشاء</th>
+                <th className="p-3 font-semibold whitespace-nowrap">إجراء الدفع</th>
               </tr>
             </thead>
             <tbody>
               {commissions.map((commission, index) => (
-                <tr key={commission.id} className={`${index % 2 === 0 ? 'bg-[var(--color-card)]' : 'bg-[var(--color-background)]'} border-b border-[var(--color-border)] text-[var(--color-primary)]`}>
-                  <td className="p-3 font-semibold">{delegateMap.get(commission.delegateId) || 'غير معروف'}</td>
-                  <td className="p-3">{commission.studentName}</td>
+                <tr key={commission.id} className={`${index % 2 === 0 ? 'bg-[var(--color-card)]' : 'bg-[var(--color-background)]'} border-b border-[var(--color-border)] text-[var(--color-text-base)] hover:bg-blue-50 transition-colors`}>
+                  <td className="p-3 font-semibold text-[var(--color-primary)]">{delegateMap.get(commission.delegateId) || 'غير معروف'}</td>
+                  <td className="p-3 font-bold">{commission.studentName}</td>
                   <td className="p-3">{commission.course}</td>
-                  <td className="p-3 font-bold">{commission.amount} ريال</td>
+                  <td className="p-3 font-bold text-[var(--color-secondary)]">{commission.amount} ريال</td>
                   <td className="p-3">
                     <span className={`px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap ${commissionStatusStyles[commission.status].classes}`}>
                         {commissionStatusStyles[commission.status].icon} {commissionStatusStyles[commission.status].label}
@@ -146,10 +146,10 @@ export const CommissionManagement: React.FC<CommissionManagementProps> = ({ comm
                         </span>
                     )}
                   </td>
-                  <td className="p-3">{commission.createdDate}</td>
+                  <td className="p-3 font-mono">{commission.createdDate}</td>
                   <td className="p-3 whitespace-nowrap">
                      {commission.status === CommissionStatus.Confirmed && isManagerOrAdmin && (
-                         <button onClick={() => onUpdateCommissionStatus(commission.id, CommissionStatus.Paid)} className="bg-[var(--color-success)] text-white text-xs py-1 px-3 rounded-md hover:bg-green-700 transition-colors">
+                         <button onClick={() => onUpdateCommissionStatus(commission.id, CommissionStatus.Paid)} className="bg-[var(--color-success)] text-white text-xs py-1 px-3 rounded-md hover:bg-green-700 transition-colors font-bold">
                             تسديد
                         </button>
                     )}

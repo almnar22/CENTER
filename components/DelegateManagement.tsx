@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo, useEffect } from 'react';
 import type { User, Delegate, Role } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -89,8 +88,8 @@ export const UserStaffModal: React.FC<{
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                            <InputField label="اسم المستخدم" id="username" value={formData.username} onChange={handleChange} />
                            <div>
-                                <label htmlFor="role" className="block font-semibold mb-2">الصلاحية:</label>
-                                <select id="role" name="role" value={formData.role} onChange={handleChange} required className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition bg-[var(--color-card)] text-[var(--color-text-base)]">
+                                <label htmlFor="role" className="block font-semibold mb-2 text-[var(--color-text-base)]">الصلاحية:</label>
+                                <select id="role" name="role" value={formData.role} onChange={handleChange} required className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition bg-[var(--color-background)] text-[var(--color-text-base)]">
                                     {roleOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                            </div>
@@ -110,8 +109,8 @@ export const UserStaffModal: React.FC<{
 };
 const InputField: React.FC<{ label: string; id: string; type?: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; placeholder?: string, required?: boolean, className?: string }> = ({ label, id, type = 'text', value, onChange, placeholder, required=true, className='' }) => (
     <div className={className}>
-        <label htmlFor={id} className="block font-semibold mb-2">{label}:</label>
-        <input type={type} id={id} name={id} value={value} onChange={onChange} required={required} placeholder={placeholder} className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition bg-[var(--color-card)] text-[var(--color-text-base)]" />
+        <label htmlFor={id} className="block font-semibold mb-2 text-[var(--color-text-base)]">{label}:</label>
+        <input type={type} id={id} name={id} value={value} onChange={onChange} required={required} placeholder={placeholder} className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition bg-[var(--color-background)] text-[var(--color-text-base)]" />
     </div>
 );
 
@@ -207,15 +206,15 @@ export const DelegateManagement: React.FC = () => {
                 placeholder="ابحث بالاسم، اسم المستخدم، أو الهاتف..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition bg-[var(--color-card)] text-[var(--color-text-base)] md:col-span-3"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition bg-[var(--color-background)] text-[var(--color-text-base)] md:col-span-3"
             />
-             <select value={filterRole} onChange={e => setFilterRole(e.target.value as Role | '')} className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] transition bg-[var(--color-card)]">
+             <select value={filterRole} onChange={e => setFilterRole(e.target.value as Role | '')} className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] transition bg-[var(--color-background)] text-[var(--color-text-base)]">
                 <option value="">كل الصلاحيات</option>
                 <option value="admin">مدير نظام</option>
                 <option value="manager">مسؤول تسجيل</option>
                 <option value="delegate">مندوب</option>
              </select>
-             <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)} className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] transition bg-[var(--color-card)]">
+             <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)} className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] transition bg-[var(--color-background)] text-[var(--color-text-base)]">
                 <option value="">كل الحالات</option>
                 <option value="active">نشط</option>
                 <option value="inactive">غير نشط</option>
@@ -235,7 +234,7 @@ export const DelegateManagement: React.FC = () => {
                             {user.isActive ? 'نشط' : 'غير نشط'}
                         </span>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-[var(--color-border)] text-sm space-y-2">
+                    <div className="mt-3 pt-3 border-t border-[var(--color-border)] text-sm space-y-2 text-[var(--color-text-base)]">
                         <p><strong>الهاتف:</strong> {user.delegate?.phone || '-'}</p>
                         <p><strong>الصلاحية:</strong> {roleLabels[user.role]}</p>
                         <p><strong>مسجل بواسطة:</strong> {user.referredById ? userMap.get(user.referredById) : '-'}</p>
@@ -251,23 +250,23 @@ export const DelegateManagement: React.FC = () => {
         </div>
 
         {/* Desktop Table View */}
-        <div className="overflow-x-auto hidden md:block">
-          <table className="w-full text-right">
-            <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
+        <div className="overflow-x-auto hidden md:block rounded-t-lg border border-[var(--color-border)]">
+          <table className="w-full text-right border-collapse">
+            <thead className="bg-[var(--color-primary)] text-[var(--color-primary-text)]">
               <tr>
-                <th className="p-3 font-semibold">الاسم الكامل</th>
-                <th className="p-3 font-semibold">اسم المستخدم</th>
-                <th className="p-3 font-semibold">الهاتف</th>
-                <th className="p-3 font-semibold">الصلاحية</th>
-                <th className="p-3 font-semibold">مسجل بواسطة</th>
-                <th className="p-3 font-semibold">الحالة</th>
-                <th className="p-3 font-semibold">إجراءات</th>
+                <th className="p-3 font-semibold whitespace-nowrap">الاسم الكامل</th>
+                <th className="p-3 font-semibold whitespace-nowrap">اسم المستخدم</th>
+                <th className="p-3 font-semibold whitespace-nowrap">الهاتف</th>
+                <th className="p-3 font-semibold whitespace-nowrap">الصلاحية</th>
+                <th className="p-3 font-semibold whitespace-nowrap">مسجل بواسطة</th>
+                <th className="p-3 font-semibold whitespace-nowrap">الحالة</th>
+                <th className="p-3 font-semibold whitespace-nowrap">إجراءات</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.map((user, index) => (
-                <tr key={user.id} className={`${index % 2 === 0 ? 'bg-[var(--color-card)]' : 'bg-[var(--color-background)]'} border-b border-[var(--color-border)] text-[var(--color-primary)]`}>
-                  <td className="p-3 font-bold">{user.fullName}</td>
+                <tr key={user.id} className={`${index % 2 === 0 ? 'bg-[var(--color-card)]' : 'bg-[var(--color-background)]'} border-b border-[var(--color-border)] text-[var(--color-text-base)] hover:bg-blue-50 transition-colors`}>
+                  <td className="p-3 font-bold text-[var(--color-primary)]">{user.fullName}</td>
                   <td className="p-3 font-mono">{user.username}</td>
                   <td className="p-3">{user.delegate?.phone || '-'}</td>
                   <td className="p-3">{roleLabels[user.role]}</td>
@@ -278,8 +277,8 @@ export const DelegateManagement: React.FC = () => {
                     </span>
                   </td>
                   <td className="p-3 space-x-2 space-x-reverse whitespace-nowrap">
-                     <button onClick={() => openEditModal(user)} className="text-blue-600 hover:underline text-sm font-semibold">تعديل</button>
-                     <button onClick={() => toggleUserStatus(user.id)} className="text-red-600 hover:underline text-sm font-semibold">
+                     <button onClick={() => openEditModal(user)} className="text-blue-600 hover:underline text-sm font-bold">تعديل</button>
+                     <button onClick={() => toggleUserStatus(user.id)} className="text-red-600 hover:underline text-sm font-bold">
                         {user.isActive ? 'تعطيل' : 'تفعيل'}
                      </button>
                   </td>

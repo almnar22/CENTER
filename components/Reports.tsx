@@ -1,5 +1,4 @@
 
-
 import React, { useMemo, useState } from 'react';
 import type { Commission, Delegate } from '../types';
 import { StudentStatus, CommissionStatus } from '../types';
@@ -76,7 +75,7 @@ export const Reports: React.FC<ReportsProps> = ({ delegates, commissions }) => {
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 no-print">
                 <h2 className="text-3xl font-bold text-[var(--color-primary)]">📈 نظام التقارير المتقدم</h2>
                 <button onClick={handlePrint} className="bg-[var(--color-secondary)] text-[var(--color-primary-text)] font-bold py-2 px-4 rounded-lg hover:bg-[var(--color-secondary-hover)] transition-colors duration-300 flex items-center gap-2 shadow w-full md:w-auto justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6 18.25m0 0l2.148 2.148a1.2 1.2 0 011.697 0L11 19.5m-2.148-2.148L11 19.5m0 0l2.148 2.148a1.2 1.2 0 001.697 0L17 18.25m-2.148-2.148L17 18.25m0 0l2.148 2.148a1.2 1.2 0 011.697 0L23 19.5m-2.148-2.148L23 19.5m0 0l2.148 2.148a1.2 1.2 0 001.697 0L29 18.25m-2.148-2.148L29 18.25m0 0l2.148 2.148a1.2 1.2 0 011.697 0L35 19.5m-2.148-2.148L35 19.5m0 0l2.148 2.148a1.2 1.2 0 001.697 0L41 18.25m-2.148-2.148L41 18.25m0 0l-2.148-2.148m0 0a1.2 1.2 0 01-1.697 0L35 13.829m2.148 2.148L35 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 00-1.697 0L29 13.829m2.148 2.148L29 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 01-1.697 0L23 13.829m2.148 2.148L23 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 00-1.697 0L17 13.829m2.148 2.148L17 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 01-1.697 0L11 13.829m2.148 2.148L11 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 00-1.697 0L2.25 13.829M7.5 15.75l.004-.004.004-.004.004-.004.004-.004M7.5 15.75a3 3 0 00-3-3M7.5 15.75a3 3 0 013-3m-3 3V4.5m0 11.25a3 3 0 003 3m-3-3a3 3 0 01-3 3m0 0V4.5m3 11.25v-1.5m3 1.5v-1.5m3 1.5v-1.5m3 1.5v-1.5m3 1.5v-1.5M15 4.5a3 3 0 11-6 0 3 3 0 016 0zm-3 4.5V12m0 0v1.5m0-1.5h-3m3 0h3m-3-1.5a3 3 0 00-3-3m3 3a3 3 0 013-3m-3 3a3 3 0 00-3 3m3 3a3 3 0 013-3m-3 3V12m0 0v1.5m0-1.5h-3m3 0h3m-3-1.5a3 3 0 00-3-3m3 3a3 3 0 013-3" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6 18.25m0 0l2.148 2.148a1.2 1.2 0 011.697 0L11 19.5m-2.148-2.148L11 19.5m0 0l2.148 2.148a1.2 1.2 0 001.697 0L17 18.25m-2.148-2.148L17 18.25m0 0l2.148 2.148a1.2 1.2 0 011.697 0L23 19.5m-2.148-2.148L23 19.5m0 0l2.148 2.148a1.2 1.2 0 001.697 0L29 18.25m-2.148-2.148L29 18.25m0 0l2.148 2.148a1.2 1.2 0 011.697 0L35 19.5m-2.148-2.148L35 19.5m0 0l2.148 2.148a1.2 1.2 0 001.697 0L41 18.25m-2.148-2.148L41 18.25m0 0l-2.148-2.148m0 0a1.2 1.2 0 01-1.697 0L35 13.829m2.148 2.148L35 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 00-1.697 0L29 13.829m2.148 2.148L29 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 01-1.697 0L23 13.829m2.148 2.148L23 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 00-1.697 0L17 13.829m2.148 2.148L17 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 01-1.697 0L11 13.829m2.148 2.148L11 13.829m0 0l-2.148-2.148m0 0a1.2 1.2 0 00-1.697 0L2.25 13.829M7.5 15.75l.004-.004.004-.004.004-.004.004-.004M7.5 15.75a3 3 0 00-3-3M7.5 15.75a3 3 0 013-3m-3 3V4.5m0 11.25a3 3 0 003 3m-3-3a3 3 0 01-3 3m0 0V4.5m3 11.25v-1.5m3 1.5v-1.5m3 1.5v-1.5m3 1.5v-1.5M15 4.5a3 3 0 11-6 0 3 3 0 016 0zm-3 4.5V12m0 0v1.5m0-1.5h-3m3 0h3m-3-1.5a3 3 0 00-3-3m3 3a3 3 0 013-3m-3 3a3 3 0 00-3 3m3 3a3 3 0 013-3m-3 3V12m0 0v1.5m0-1.5h-3m3 0h3m-3-1.5a3 3 0 00-3-3m3 3a3 3 0 013-3" /></svg>
                     <span>طباعة التقرير / PDF</span>
                 </button>
             </div>
@@ -86,7 +85,7 @@ export const Reports: React.FC<ReportsProps> = ({ delegates, commissions }) => {
                      <select
                         value={selectedDelegateId}
                         onChange={(e) => setSelectedDelegateId(e.target.value)}
-                        className="w-full md:w-1/3 px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition bg-[var(--color-card)] text-[var(--color-text-base)]"
+                        className="w-full md:w-1/3 px-4 py-2 border border-[var(--color-border)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition bg-[var(--color-background)] text-[var(--color-text-base)]"
                     >
                         <option value="">تصفية حسب المندوب (الكل)</option>
                         {delegates.filter(d=>d.role === 'delegate').map(d => <option key={d.id} value={d.id}>{d.fullName}</option>)}
@@ -98,13 +97,13 @@ export const Reports: React.FC<ReportsProps> = ({ delegates, commissions }) => {
                     {filteredData.map((rep, index) => (
                         <div key={index} className="bg-[var(--color-background)] p-4 rounded-lg shadow border-r-4 border-[var(--color-primary)]">
                              <p className="font-bold text-[var(--color-primary)] text-lg mb-2">{rep.delegateName}</p>
-                             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t border-[var(--color-border)] pt-2">
+                             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t border-[var(--color-border)] pt-2 text-[var(--color-text-base)]">
                                 <p><strong>إجمالي الطلاب:</strong> {rep.totalStudents}</p>
                                 <p className="text-green-600"><strong>مستمرين:</strong> {rep.studyingStudents}</p>
                                 <p className="text-red-600"><strong>منقطعين:</strong> {rep.droppedStudents}</p>
                                 <p className="text-purple-600"><strong>مكتملين:</strong> {rep.completedStudents}</p>
                              </div>
-                             <div className="mt-2 pt-2 border-t border-[var(--color-border)] text-sm space-y-1">
+                             <div className="mt-2 pt-2 border-t border-[var(--color-border)] text-sm space-y-1 text-[var(--color-text-base)]">
                                 <p><strong>إجمالي العمولات:</strong> <span className="font-bold text-[var(--color-secondary)]">{rep.totalCommissions.toLocaleString()} ريال</span></p>
                                 <p><strong>العمولات المدفوعة:</strong> <span className="font-bold text-[var(--color-success-text)]">{rep.paidCommissions.toLocaleString()} ريال</span></p>
                              </div>
@@ -127,24 +126,24 @@ export const Reports: React.FC<ReportsProps> = ({ delegates, commissions }) => {
                 </div>
 
                 {/* Desktop Table View */}
-                <div className="overflow-x-auto hidden md:block">
-                    <table className="w-full text-right">
-                        <thead className="bg-[var(--color-primary-light)] text-[var(--color-primary)]">
+                <div className="overflow-x-auto hidden md:block rounded-t-lg border border-[var(--color-border)]">
+                    <table className="w-full text-right border-collapse">
+                        <thead className="bg-[var(--color-primary)] text-[var(--color-primary-text)]">
                             <tr>
                                 <th className="p-3 font-semibold">المندوب</th>
-                                <th className="p-3 font-semibold">إجمالي الطلاب</th>
-                                <th className="p-3 font-semibold">الطلاب المستمرين</th>
-                                <th className="p-3 font-semibold">الطلاب المنقطعين</th>
-                                <th className="p-3 font-semibold">الطلاب المكتملين</th>
+                                <th className="p-3 font-semibold text-center">إجمالي الطلاب</th>
+                                <th className="p-3 font-semibold text-center">الطلاب المستمرين</th>
+                                <th className="p-3 font-semibold text-center">الطلاب المنقطعين</th>
+                                <th className="p-3 font-semibold text-center">الطلاب المكتملين</th>
                                 <th className="p-3 font-semibold">إجمالي العمولات</th>
                                 <th className="p-3 font-semibold">العمولات المدفوعة</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredData.map((rep, index) => (
-                                <tr key={index} className={`${index % 2 === 0 ? 'bg-[var(--color-card)]' : 'bg-[var(--color-background)]'} border-b border-[var(--color-border)]`}>
+                                <tr key={index} className={`${index % 2 === 0 ? 'bg-[var(--color-card)]' : 'bg-[var(--color-background)]'} border-b border-[var(--color-border)] text-[var(--color-text-base)] hover:bg-blue-50 transition-colors`}>
                                     <td className="p-3 font-bold text-[var(--color-primary)]">{rep.delegateName}</td>
-                                    <td className="p-3 text-center font-semibold">{rep.totalStudents}</td>
+                                    <td className="p-3 text-center font-bold">{rep.totalStudents}</td>
                                     <td className="p-3 text-center font-semibold text-green-600">{rep.studyingStudents}</td>
                                     <td className="p-3 text-center font-semibold text-red-600">{rep.droppedStudents}</td>
                                     <td className="p-3 text-center font-semibold text-purple-600">{rep.completedStudents}</td>

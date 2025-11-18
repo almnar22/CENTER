@@ -62,7 +62,6 @@ export interface Delegate {
   students: number;
   email?: string;
   isActive: boolean;
-  // FIX: Added role to Delegate type to allow filtering by role.
   role: Role;
 }
 
@@ -93,4 +92,37 @@ export interface Commission {
     paidDate?: string;
 }
 
-export type View = 'dashboard' | 'students' | 'delegates' | 'commissions' | 'reports' | 'settings' | 'logout';
+export interface ActivityLog {
+    id: number;
+    userId: number;
+    userName: string;
+    actionType: 'add' | 'edit' | 'delete' | 'login' | 'logout' | 'backup' | 'restore' | 'export' | 'import';
+    target: string; // Table name or entity
+    description: string;
+    timestamp: string;
+}
+
+export interface BackupData {
+    name: string;
+    date: string;
+    size: string;
+    data: any; // The full state dump
+}
+
+export interface CourseObject {
+    id: number;
+    name: string;
+    description: string;
+    category: string;
+    duration: number; // in weeks
+    price: number;
+    max_students: number;
+    current_students: number;
+    time_slot: string; // 'صباحي', 'مسائي', etc.
+    start_date: string;
+    end_date: string;
+    enrollment_open: boolean;
+    status: 'active' | 'upcoming' | 'completed';
+}
+
+export type View = 'dashboard' | 'students' | 'delegates' | 'commissions' | 'courses' | 'reports' | 'settings' | 'activity-logs' | 'logout';

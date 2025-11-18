@@ -1,7 +1,7 @@
 
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import type { User, Role, Delegate, BankAccount } from '../types';
+import type { User, Role, Delegate, BankAccount, ActivityLog } from '../types';
 
 // New, comprehensive mock data for the final system
 const initialUsers: User[] = [
@@ -39,6 +39,7 @@ interface AuthContextType {
     users: User[];
     delegates: Delegate[];
     bankAccounts: BankAccount[];
+    activityLogs: ActivityLog[];
     login: (username: string, password?: string) => Promise<User>;
     logout: () => void;
     addUser: (userData: any, referredById?: number) => User;
@@ -47,6 +48,9 @@ interface AuthContextType {
     incrementStudentCount: (delegateId: number) => void;
     decrementStudentCount: (delegateId: number) => void;
     addOrUpdateBankAccount: (accountData: Omit<BankAccount, 'id'>) => void;
+    logActivity: (actionType: ActivityLog['actionType'], target: string, description: string) => void;
+    restoreData: (data: { users?: User[], delegates?: Delegate[], bankAccounts?: BankAccount[] }) => void;
+    changePassword: (userId: number, currentPass: string, newPass: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,6 +59,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [users, setUsers] = useState<User[]>(initialUsers);
     const [delegates, setDelegates] = useState<Delegate[]>(initialDelegates);
     const [bankAccounts, setBankAccounts] = useState<BankAccount[]>(initialBankAccounts);
+    const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
 
     const [currentUser, setCurrentUser] = useState<User | null>(() => {
         try {
@@ -193,7 +198,66 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
     };
 
-    const contextValue = { currentUser, users, delegates, bankAccounts, login, logout, addUser, updateUser, toggleUserStatus, incrementStudentCount, decrementStudentCount, addOrUpdateBankAccount };
+    const logActivity = (actionType: ActivityLog['actionType'], target: string, description: string) => {
+        const newLog: ActivityLog = {
+            id: Date.now(),
+            userId: currentUser?.id || 0,
+            userName: currentUser?.fullName || 'System',
+            actionType,
+            target,
+            description,
+            timestamp: new Date().toISOString()
+        };
+        setActivityLogs(prev => [newLog, ...prev]);
+    };
+
+    const restoreData = (data: { users?: User[], delegates?: Delegate[], bankAccounts?: BankAccount[] }) => {
+        if (data.users) setUsers(data.users);
+        if (data.delegates) setDelegates(data.delegates);
+        if (data.bankAccounts) setBankAccounts(data.bankAccounts);
+    };
+
+    const changePassword = (userId: number, currentPass: string, newPass: string): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex === -1) {
+                reject(new Error('المستخدم غير موجود'));
+                return;
+            }
+            
+            const user = users[userIndex];
+            if (user.password !== currentPass) {
+                 reject(new Error('كلمة المرور الحالية غير صحيحة'));
+                 return;
+            }
+
+            const updatedUser = { ...user, password: newPass };
+            const newUsers = [...users];
+            newUsers[userIndex] = updatedUser;
+            setUsers(newUsers);
+             
+             resolve();
+        });
+    };
+
+    const contextValue = { 
+        currentUser, 
+        users, 
+        delegates, 
+        bankAccounts, 
+        activityLogs,
+        login, 
+        logout, 
+        addUser, 
+        updateUser, 
+        toggleUserStatus, 
+        incrementStudentCount, 
+        decrementStudentCount, 
+        addOrUpdateBankAccount,
+        logActivity,
+        restoreData,
+        changePassword
+    };
 
     return (
         <AuthContext.Provider value={contextValue}>
